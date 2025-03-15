@@ -1,5 +1,65 @@
 .App {
-  text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f0f0f0;
+  position: relative;
+}
+
+/* Film strip border on left and right sides */
+.App::before,
+.App::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 50px;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    #000 0px,
+    #000 20px,
+    #222 20px,
+    #222 40px
+  );
+  z-index: 10;
+}
+
+.App::before {
+  left: 0;
+}
+
+.App::after {
+  right: 0;
+}
+
+main {
+  flex: 1;
+  padding: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+footer {
+  margin-top: auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .App::before,
+  .App::after {
+    width: 20px; 
+  }
+}
+
+/* Rating stars styling */
+.star {
+  color: #ddd;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.star.filled {
+  color: #ffc107;
 }
 
 .App-logo {

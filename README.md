@@ -1,70 +1,103 @@
-# Getting Started with Create React App
+# Movie Ratings By Us
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A personal movie rating website for documenting and comparing movie ratings between partners, inspired by the design from the provided image.
 
-## Available Scripts
+## Overview
 
-In the project directory, you can run:
+This website allows a couple to document and rate the movies they have watched individually and together. It provides three main sections:
 
-### `npm start`
+1. **My Movies** - Movies watched and rated by one partner
+2. **Her Movies** - Movies watched and rated by the other partner
+3. **Our Movies** - Movies watched together with side-by-side ratings from both partners
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Features
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- **Movie Listings**: Display movies in a card/grid format
+- **Rating System**: Star ratings from 1 to 10, with optional short reviews
+- **Image Upload**: Include movie posters via URL
+- **Local Storage**: Movie data is saved in local storage for persistence
+- **Film Strip Design**: Visual design inspired by classic film strips
 
-### `npm test`
+## Tech Stack
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Frontend**: React.js with React Router for navigation
+- **Styling**: Tailwind CSS for UI styling
+- **State Management**: React Context API for global state
+- **Storage**: LocalStorage for persistently storing movie data
 
-### `npm run build`
+## Getting Started
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Prerequisites
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- Node.js (v14 or later)
+- npm or yarn
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Installation
 
-### `npm run eject`
+1. Clone the repository:
+   ```
+   git clone https://github.com/yourusername/movie-ratings.git
+   cd movie-ratings
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+2. Install dependencies:
+   ```
+   npm install
+   ```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+3. Start the development server:
+   ```
+   npm start
+   ```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Usage
 
-## Learn More
+### Adding a New Movie
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+1. Navigate to the appropriate section (My Movies, Her Movies, or Our Movies)
+2. Click the "Add New Movie" button
+3. Fill in the movie details and your rating(s)
+4. Click "Add Movie" to save
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Viewing Movies
 
-### Code Splitting
+- Movies are displayed in a grid format with movie posters and ratings
+- Each card shows the movie title, poster, and respective ratings
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Project Structure
 
-### Analyzing the Bundle Size
+```
+movie-ratings/
+├── public/
+├── src/
+│   ├── components/       # Reusable UI components
+│   │   ├── AddMovieForm.js
+│   │   ├── MovieCard.js
+│   │   └── MovieGrid.js
+│   ├── context/          # Global state management
+│   │   └── MovieContext.js
+│   ├── pages/            # Page components
+│   │   ├── HomePage.js
+│   │   ├── MyMoviesPage.js
+│   │   ├── HerMoviesPage.js
+│   │   └── OurMoviesPage.js
+│   ├── App.js            # Main app component with routing
+│   ├── App.css           # App styles
+│   ├── index.js          # Entry point
+│   └── index.css         # Global styles
+└── README.md
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Future Enhancements
 
-### Making a Progressive Web App
+- User authentication for separate user data
+- Backend server and database for persistent storage
+- Advanced sorting and filtering options
+- Movie search functionality
+- Integration with movie databases for auto-populating movie details
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## License
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+This project is licensed under the MIT License.
