@@ -17,17 +17,23 @@ const MovieCard = ({ movie, ratings, onEdit, onDelete }) => {
   }, []);
   
   // Function to render star ratings
-  const renderStars = (rating) => {
+  const renderStars = (ratingObj) => {
+    // Extract the score from the rating object and ensure it's an integer
+    const score = Math.round(ratingObj.score);
+    
     return (
       <div className="flex mt-2">
         {[...Array(5)].map((_, i) => (
           <span 
             key={i} 
-            className={`text-xl ${i < Math.round(rating / 2) ? 'text-yellow-400' : 'text-gray-300'} star`}
+            className={`text-xl ${i < Math.ceil(score / 2) ? 'text-yellow-400' : 'text-gray-300'} star`}
           >
             ★
           </span>
         ))}
+        <span className="ml-2 font-bold" style={{color: getPersonColor(ratingObj.person)}}>
+          {score}/10
+        </span>
       </div>
     );
   };
@@ -53,12 +59,11 @@ const MovieCard = ({ movie, ratings, onEdit, onDelete }) => {
       {(onEdit || onDelete) && (
         <div 
           className="absolute top-3 right-3 z-20"
-          onMouseEnter={() => setShowOptions(true)}
-          onMouseLeave={() => setShowOptions(false)}
         >
           <button 
             className="bg-gray-800 bg-opacity-70 rounded-full p-1 text-white hover:bg-opacity-100 transition-all"
             aria-label="Options"
+            onClick={() => setShowOptions(!showOptions)}
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
@@ -69,7 +74,10 @@ const MovieCard = ({ movie, ratings, onEdit, onDelete }) => {
             <div className="absolute right-0 mt-1 w-32 bg-white rounded-md shadow-lg border border-gray-200 overflow-hidden z-30 transform origin-top-right transition-all duration-200 scale-100">
               {onEdit && (
                 <button 
-                  onClick={() => onEdit(movie)}
+                  onClick={() => {
+                    onEdit(movie);
+                    setShowOptions(false);
+                  }}
                   className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white transition-colors"
                 >
                   Edit
@@ -77,7 +85,10 @@ const MovieCard = ({ movie, ratings, onEdit, onDelete }) => {
               )}
               {onDelete && (
                 <button 
-                  onClick={() => onDelete(movie.id)}
+                  onClick={() => {
+                    onDelete(movie.id);
+                    setShowOptions(false);
+                  }}
                   className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-red-500 hover:text-white transition-colors"
                 >
                   Delete
@@ -109,13 +120,7 @@ const MovieCard = ({ movie, ratings, onEdit, onDelete }) => {
                 RATING: by {rating.person}
               </p>
               {renderLine()}
-              {renderLine()}
-              {renderLine()}
-              {renderLine()}
-              {renderStars(rating.score)}
-              <div className="mt-1 text-center font-bold" style={{color: getPersonColor(rating.person)}}>
-                {rating.score}/10
-              </div>
+              {renderStars(rating)}
               {rating.review && (
                 <div className="mt-3 text-sm text-gray-700 bg-yellow-50 p-3 rounded-md border-l-2 transition-all duration-300 hover:border-l-4 hover:shadow-md" style={{borderLeftColor: getPersonColor(rating.person)}}>
                   {rating.review.split('\n').map((line, i) => (

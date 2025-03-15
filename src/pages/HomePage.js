@@ -35,8 +35,8 @@ const HomePage = () => {
         <div className="w-24 h-1 bg-yellow-400 mx-auto mb-8"></div>
         
         <p className="text-lg mb-8 leading-relaxed max-w-2xl mx-auto">
-          Welcome to our movie rating collection! This is where we document and share our thoughts 
-          on the movies we've watched individually and together.
+        Welcome to Our Little Movie Universe! 🎬💙
+        This is where we keep track of our movie adventures, rating and remembering every film we watch—together or apart. 🍿✨
         </p>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">

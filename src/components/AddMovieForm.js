@@ -55,9 +55,10 @@ const AddMovieForm = ({ onAddMovie, formType }) => {
             min="1" 
             max="10"
             value={myRating} 
-            onChange={(e) => setMyRating(Number(e.target.value))}
+            onChange={(e) => setMyRating(Math.round(Number(e.target.value)))}
             className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:border-transparent transition-all" 
             style={{borderColor: '#000080'}}
+            step="1"
           />
           <div className="flex mt-2 mb-4">
             {[...Array(10)].map((_, i) => (
@@ -67,8 +68,8 @@ const AddMovieForm = ({ onAddMovie, formType }) => {
                 onClick={() => setMyRating(i + 1)}
                 className={`w-8 h-8 rounded-full mr-1 flex items-center justify-center transition-colors transform hover:scale-110`}
                 style={{
-                  backgroundColor: i < myRating ? '#000080' : '#e5e7eb',
-                  color: i < myRating ? 'white' : '#4b5563'
+                  backgroundColor: i < myRating ? '#FFD700' : '#e5e7eb',
+                  color: i < myRating ? '#333' : '#4b5563'
                 }}
               >
                 {i + 1}
@@ -96,9 +97,10 @@ const AddMovieForm = ({ onAddMovie, formType }) => {
             min="1" 
             max="10"
             value={herRating} 
-            onChange={(e) => setHerRating(Number(e.target.value))}
+            onChange={(e) => setHerRating(Math.round(Number(e.target.value)))}
             className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:border-transparent transition-all" 
             style={{borderColor: '#C8A2C8'}}
+            step="1"
           />
           <div className="flex mt-2 mb-4">
             {[...Array(10)].map((_, i) => (
@@ -108,8 +110,8 @@ const AddMovieForm = ({ onAddMovie, formType }) => {
                 onClick={() => setHerRating(i + 1)}
                 className={`w-8 h-8 rounded-full mr-1 flex items-center justify-center transition-colors transform hover:scale-110`}
                 style={{
-                  backgroundColor: i < herRating ? '#C8A2C8' : '#e5e7eb',
-                  color: i < herRating ? 'white' : '#4b5563'
+                  backgroundColor: i < herRating ? '#FFD700' : '#e5e7eb',
+                  color: i < herRating ? '#333' : '#4b5563'
                 }}
               >
                 {i + 1}
@@ -138,9 +140,10 @@ const AddMovieForm = ({ onAddMovie, formType }) => {
             min="1" 
             max="10"
             value={myRating} 
-            onChange={(e) => setMyRating(Number(e.target.value))}
+            onChange={(e) => setMyRating(Math.round(Number(e.target.value)))}
             className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:border-transparent transition-all" 
             style={{borderColor: '#9370DB'}}
+            step="1"
           />
           <div className="flex mt-2 mb-4">
             {[...Array(10)].map((_, i) => (
@@ -150,8 +153,8 @@ const AddMovieForm = ({ onAddMovie, formType }) => {
                 onClick={() => setMyRating(i + 1)}
                 className={`w-8 h-8 rounded-full mr-1 flex items-center justify-center transition-colors transform hover:scale-110`}
                 style={{
-                  backgroundColor: i < myRating ? '#9370DB' : '#e5e7eb',
-                  color: i < myRating ? 'white' : '#4b5563'
+                  backgroundColor: i < myRating ? '#FFD700' : '#e5e7eb',
+                  color: i < myRating ? '#333' : '#4b5563'
                 }}
               >
                 {i + 1}

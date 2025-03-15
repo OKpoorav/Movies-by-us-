@@ -14,9 +14,9 @@ const EditMovieModal = ({ movie, formType, onSave, onClose }) => {
     if (movie) {
       setTitle(movie.title || '');
       setPoster(movie.poster || '');
-      setMyRating(movie.myRating || 5);
+      setMyRating(Math.round(movie.myRating || 5));
       setMyReview(movie.myReview || '');
-      setHerRating(movie.herRating || 5);
+      setHerRating(Math.round(movie.herRating || 5));
       setHerReview(movie.herReview || '');
     }
     
@@ -61,9 +61,10 @@ const EditMovieModal = ({ movie, formType, onSave, onClose }) => {
             min="1" 
             max="10"
             value={myRating} 
-            onChange={(e) => setMyRating(Number(e.target.value))}
+            onChange={(e) => setMyRating(Math.round(Number(e.target.value)))}
             className="w-full p-2 border border-gray-300 rounded" 
             style={{borderColor: getFormColor()}}
+            step="1"
           />
           <div className="flex mt-2 mb-4">
             {[...Array(10)].map((_, i) => (
@@ -73,8 +74,8 @@ const EditMovieModal = ({ movie, formType, onSave, onClose }) => {
                 onClick={() => setMyRating(i + 1)}
                 className="w-8 h-8 rounded-full mr-1 flex items-center justify-center transition-all transform hover:scale-110"
                 style={{
-                  backgroundColor: i < myRating ? getFormColor() : '#e5e7eb',
-                  color: i < myRating ? 'white' : '#4b5563'
+                  backgroundColor: i < myRating ? '#FFD700' : '#e5e7eb',
+                  color: i < myRating ? '#333' : '#4b5563'
                 }}
               >
                 {i + 1}
@@ -100,9 +101,10 @@ const EditMovieModal = ({ movie, formType, onSave, onClose }) => {
             min="1" 
             max="10"
             value={herRating} 
-            onChange={(e) => setHerRating(Number(e.target.value))}
+            onChange={(e) => setHerRating(Math.round(Number(e.target.value)))}
             className="w-full p-2 border border-gray-300 rounded" 
             style={{borderColor: getFormColor()}}
+            step="1"
           />
           <div className="flex mt-2 mb-4">
             {[...Array(10)].map((_, i) => (
@@ -112,8 +114,8 @@ const EditMovieModal = ({ movie, formType, onSave, onClose }) => {
                 onClick={() => setHerRating(i + 1)}
                 className="w-8 h-8 rounded-full mr-1 flex items-center justify-center transition-all transform hover:scale-110"
                 style={{
-                  backgroundColor: i < herRating ? getFormColor() : '#e5e7eb',
-                  color: i < herRating ? 'white' : '#4b5563'
+                  backgroundColor: i < herRating ? '#FFD700' : '#e5e7eb',
+                  color: i < herRating ? '#333' : '#4b5563'
                 }}
               >
                 {i + 1}
@@ -141,9 +143,10 @@ const EditMovieModal = ({ movie, formType, onSave, onClose }) => {
               min="1" 
               max="10"
               value={myRating} 
-              onChange={(e) => setMyRating(Number(e.target.value))}
+              onChange={(e) => setMyRating(Math.round(Number(e.target.value)))}
               className="w-full p-2 border border-gray-300 rounded" 
               style={{borderColor: getFormColor()}}
+              step="1"
             />
             <div className="flex mt-2 mb-4">
               {[...Array(10)].map((_, i) => (
@@ -153,8 +156,8 @@ const EditMovieModal = ({ movie, formType, onSave, onClose }) => {
                   onClick={() => setMyRating(i + 1)}
                   className="w-8 h-8 rounded-full mr-1 flex items-center justify-center transition-all transform hover:scale-110"
                   style={{
-                    backgroundColor: i < myRating ? getFormColor() : '#e5e7eb',
-                    color: i < myRating ? 'white' : '#4b5563'
+                    backgroundColor: i < myRating ? '#FFD700' : '#e5e7eb',
+                    color: i < myRating ? '#333' : '#4b5563'
                   }}
                 >
                   {i + 1}
