@@ -1,19 +1,22 @@
 import React from 'react';
 import MovieCard from './MovieCard';
 
-const MovieGrid = ({ movies, ratingType }) => {
+const MovieGrid = ({ movies, ratingType, onEdit, onDelete }) => {
   // Function to determine which ratings to display based on the page
   const getRatingsForMovie = (movie) => {
     switch (ratingType) {
       case 'personal':
-        return [{ person: 'me', score: movie.myRating, review: movie.myReview }];
+        return [{ person: 'him', score: movie.myRating, review: movie.myReview }];
       case 'partner':
-        return [{ person: 'anya', score: movie.herRating, review: movie.herReview }];
+        return [{ person: 'her', score: movie.herRating, review: movie.herReview }];
       case 'both':
         return [
-          { person: 'me', score: movie.myRating, review: movie.myReview },
-          { person: 'anya', score: movie.herRating, review: movie.herReview }
+          { person: 'him', score: movie.myRating, review: movie.myReview },
+          { person: 'her', score: movie.herRating, review: movie.herReview }
         ];
+      case 'combined':
+        const combinedScore = Math.round((movie.myRating + movie.herRating) / 2);
+        return [{ person: 'us', score: combinedScore, review: `${movie.myReview}\n\n${movie.herReview}` }];
       default:
         return [];
     }
@@ -26,6 +29,8 @@ const MovieGrid = ({ movies, ratingType }) => {
           <MovieCard 
             movie={movie} 
             ratings={getRatingsForMovie(movie)}
+            onEdit={onEdit ? () => onEdit(movie) : null}
+            onDelete={onDelete ? () => onDelete(movie.id) : null}
           />
         </div>
       ))}

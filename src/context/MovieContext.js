@@ -1,42 +1,14 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 
-// Sample initial data
-const initialMovies = [
-  {
-    id: 1,
-    title: 'Life of Pi',
-    poster: 'https://via.placeholder.com/150x225?text=Life+Of+Pi',
-    myRating: 8,
-    myReview: 'Visually stunning adventure with deep philosophical themes.',
-    herRating: 7,
-    herReview: 'Beautiful cinematography but a bit slow at times.',
-  },
-  {
-    id: 2,
-    title: 'The Shawshank Redemption',
-    poster: 'https://via.placeholder.com/150x225?text=Shawshank',
-    myRating: 10,
-    myReview: 'A timeless classic about hope and perseverance.',
-    herRating: 9,
-    herReview: 'Powerful storytelling and incredible performances.',
-  },
-  {
-    id: 3,
-    title: 'Inception',
-    poster: 'https://via.placeholder.com/150x225?text=Inception',
-    myRating: 9,
-    myReview: 'Mind-bending thriller with amazing visuals.',
-    herRating: 8,
-    herReview: 'Complex but rewarding, great soundtrack.',
-  }
-];
+// Empty initial data
+const initialMovies = [];
 
 // Create the context
 const MovieContext = createContext();
 
 // Create a provider component
 export const MovieProvider = ({ children }) => {
-  // Initialize state with sample data or data from local storage
+  // Initialize state with data from local storage or empty array
   const [movies, setMovies] = useState(() => {
     const savedMovies = localStorage.getItem('movies');
     return savedMovies ? JSON.parse(savedMovies) : initialMovies;
@@ -52,8 +24,20 @@ export const MovieProvider = ({ children }) => {
     setMovies([...movies, newMovie]);
   };
 
+  // Edit a movie
+  const editMovie = (updatedMovie) => {
+    setMovies(movies.map(movie => 
+      movie.id === updatedMovie.id ? updatedMovie : movie
+    ));
+  };
+
+  // Delete a movie
+  const deleteMovie = (movieId) => {
+    setMovies(movies.filter(movie => movie.id !== movieId));
+  };
+
   // Filter movies for specific pages
-  const getMyMovies = () => {
+  const getHisMovies = () => {
     return movies.filter(movie => movie.myRating > 0);
   };
 
@@ -65,13 +49,21 @@ export const MovieProvider = ({ children }) => {
     return movies.filter(movie => movie.myRating > 0 && movie.herRating > 0);
   };
 
+  // Get a specific movie by id
+  const getMovieById = (id) => {
+    return movies.find(movie => movie.id === id);
+  };
+
   // Values to be provided to consuming components
   const value = {
     movies,
     addMovie,
-    getMyMovies,
+    editMovie,
+    deleteMovie,
+    getHisMovies,
     getHerMovies,
-    getOurMovies
+    getOurMovies,
+    getMovieById
   };
 
   return (
