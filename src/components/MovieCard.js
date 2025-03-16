@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const MovieCard = ({ movie, ratings, onEdit, onDelete }) => {
   // If there's no movie poster, use a placeholder
@@ -6,6 +6,8 @@ const MovieCard = ({ movie, ratings, onEdit, onDelete }) => {
   
   const [showOptions, setShowOptions] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const menuRef = useRef(null);
+  const buttonRef = useRef(null);
   
   useEffect(() => {
     // Trigger animation after component mounts
@@ -15,6 +17,26 @@ const MovieCard = ({ movie, ratings, onEdit, onDelete }) => {
     
     return () => clearTimeout(timer);
   }, []);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        showOptions &&
+        menuRef.current && 
+        !menuRef.current.contains(event.target) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target)
+      ) {
+        setShowOptions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showOptions]);
   
   // Function to render star ratings
   const renderStars = (ratingObj) => {
@@ -57,13 +79,15 @@ const MovieCard = ({ movie, ratings, onEdit, onDelete }) => {
       style={{transformStyle: 'preserve-3d'}}
     >
       {(onEdit || onDelete) && (
-        <div 
-          className="absolute top-3 right-3 z-20"
-        >
+        <div className="absolute top-3 right-3 z-20">
           <button 
-            className="bg-gray-800 bg-opacity-70 rounded-full p-1 text-white hover:bg-opacity-100 transition-all"
+            ref={buttonRef}
+            className="bg-gray-800 bg-opacity-70 rounded-full p-2 text-white hover:bg-opacity-100 transition-all"
             aria-label="Options"
-            onClick={() => setShowOptions(!showOptions)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowOptions(!showOptions);
+            }}
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
@@ -71,27 +95,42 @@ const MovieCard = ({ movie, ratings, onEdit, onDelete }) => {
           </button>
           
           {showOptions && (
-            <div className="absolute right-0 mt-1 w-32 bg-white rounded-md shadow-lg border border-gray-200 overflow-hidden z-30 transform origin-top-right transition-all duration-200 scale-100">
+            <div 
+              ref={menuRef}
+              className="absolute right-0 top-full mt-1 w-36 bg-white rounded-md shadow-lg border border-gray-200 overflow-hidden z-30 transform-gpu"
+            >
               {onEdit && (
                 <button 
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     onEdit(movie);
                     setShowOptions(false);
                   }}
-                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-500 hover:text-white transition-colors"
+                  className="block w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-blue-500 hover:text-white transition-colors"
                 >
-                  Edit
+                  <span className="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    Edit
+                  </span>
                 </button>
               )}
               {onDelete && (
                 <button 
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     onDelete(movie.id);
                     setShowOptions(false);
                   }}
-                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-red-500 hover:text-white transition-colors"
+                  className="block w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-red-500 hover:text-white transition-colors"
                 >
-                  Delete
+                  <span className="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    Delete
+                  </span>
                 </button>
               )}
             </div>
@@ -106,6 +145,10 @@ const MovieCard = ({ movie, ratings, onEdit, onDelete }) => {
             src={posterUrl} 
             alt={movie.title} 
             className="h-full object-cover w-full transform transition-transform duration-700 hover:scale-110"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = 'https://via.placeholder.com/150x225?text=No+Poster';
+            }}
           />
           <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-80 text-white py-2 px-3">
             <h3 className="font-medium text-center font-satisfy text-lg">{movie.title}</h3>

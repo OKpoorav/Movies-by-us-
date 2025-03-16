@@ -7,35 +7,47 @@ const AddMovieForm = ({ onAddMovie, formType }) => {
   const [myReview, setMyReview] = useState('');
   const [herRating, setHerRating] = useState(5);
   const [herReview, setHerReview] = useState('');
-  const [combinedRating, setCombinedRating] = useState(5);
-  const [combinedReview, setCombinedReview] = useState('');
   const [isFormVisible, setIsFormVisible] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Prevent double submission
+    if (isSubmitting) return;
+    
+    setIsSubmitting(true);
+    
+    // Ensure integers for ratings
+    const updatedMyRating = Math.round(Number(myRating));
+    const updatedHerRating = Math.round(Number(herRating));
+    
     const newMovie = {
-      id: Date.now(), // Simple ID generation
       title,
       poster,
-      myRating: formType === 'personal' || formType === 'both' ? myRating : 0,
+      myRating: formType === 'personal' || formType === 'both' ? updatedMyRating : 0,
       myReview: formType === 'personal' || formType === 'both' ? myReview : '',
-      herRating: formType === 'partner' || formType === 'both' ? herRating : 0,
+      herRating: formType === 'partner' || formType === 'both' ? updatedHerRating : 0,
       herReview: formType === 'partner' || formType === 'both' ? herReview : '',
     };
     
-    onAddMovie(newMovie);
-    
-    // Reset form
-    setTitle('');
-    setPoster('');
-    setMyRating(5);
-    setMyReview('');
-    setHerRating(5);
-    setHerReview('');
-    setCombinedRating(5);
-    setCombinedReview('');
-    setIsFormVisible(false);
+    try {
+      await onAddMovie(newMovie);
+      
+      // Reset form
+      setTitle('');
+      setPoster('');
+      setMyRating(5);
+      setMyReview('');
+      setHerRating(5);
+      setHerReview('');
+      setIsFormVisible(false);
+    } catch (error) {
+      console.error('Error adding movie:', error);
+      alert('Failed to add movie. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const getFormColor = () => {
@@ -60,13 +72,13 @@ const AddMovieForm = ({ onAddMovie, formType }) => {
             style={{borderColor: '#000080'}}
             step="1"
           />
-          <div className="flex mt-2 mb-4">
+          <div className="flex flex-wrap mt-2 mb-4">
             {[...Array(10)].map((_, i) => (
               <button
                 key={i}
                 type="button"
                 onClick={() => setMyRating(i + 1)}
-                className={`w-8 h-8 rounded-full mr-1 flex items-center justify-center transition-colors transform hover:scale-110`}
+                className="w-8 h-8 rounded-full mr-1 mb-1 flex items-center justify-center transition-all transform hover:scale-110"
                 style={{
                   backgroundColor: i < myRating ? '#FFD700' : '#e5e7eb',
                   color: i < myRating ? '#333' : '#4b5563'
@@ -102,13 +114,13 @@ const AddMovieForm = ({ onAddMovie, formType }) => {
             style={{borderColor: '#C8A2C8'}}
             step="1"
           />
-          <div className="flex mt-2 mb-4">
+          <div className="flex flex-wrap mt-2 mb-4">
             {[...Array(10)].map((_, i) => (
               <button
                 key={i}
                 type="button"
                 onClick={() => setHerRating(i + 1)}
-                className={`w-8 h-8 rounded-full mr-1 flex items-center justify-center transition-colors transform hover:scale-110`}
+                className="w-8 h-8 rounded-full mr-1 mb-1 flex items-center justify-center transition-all transform hover:scale-110"
                 style={{
                   backgroundColor: i < herRating ? '#FFD700' : '#e5e7eb',
                   color: i < herRating ? '#333' : '#4b5563'
@@ -133,8 +145,9 @@ const AddMovieForm = ({ onAddMovie, formType }) => {
     } else if (formType === 'both') {
       return (
         <div className="mb-6 p-4 bg-gray-50 rounded-lg border" style={{borderColor: '#9370DB'}}>
-          <h3 className="font-medium text-lg mb-3" style={{color: '#9370DB'}}>Our Combined Rating</h3>
-          <label className="block text-gray-700 mb-2">Rating (1-10)</label>
+          <h3 className="font-medium text-lg mb-3" style={{color: '#9370DB'}}>Our Ratings</h3>
+          
+          <label className="block text-gray-700 mb-2">His Rating (1-10)</label>
           <input 
             type="number" 
             min="1" 
@@ -145,13 +158,13 @@ const AddMovieForm = ({ onAddMovie, formType }) => {
             style={{borderColor: '#9370DB'}}
             step="1"
           />
-          <div className="flex mt-2 mb-4">
+          <div className="flex flex-wrap mt-2 mb-4">
             {[...Array(10)].map((_, i) => (
               <button
                 key={i}
                 type="button"
                 onClick={() => setMyRating(i + 1)}
-                className={`w-8 h-8 rounded-full mr-1 flex items-center justify-center transition-colors transform hover:scale-110`}
+                className="w-8 h-8 rounded-full mr-1 mb-1 flex items-center justify-center transition-all transform hover:scale-110"
                 style={{
                   backgroundColor: i < myRating ? '#FFD700' : '#e5e7eb',
                   color: i < myRating ? '#333' : '#4b5563'
@@ -171,6 +184,34 @@ const AddMovieForm = ({ onAddMovie, formType }) => {
             placeholder="What did he think about this movie?"
             style={{borderColor: '#9370DB'}}
           />
+          
+          <label className="block text-gray-700 mt-5 mb-2">Her Rating (1-10)</label>
+          <input 
+            type="number" 
+            min="1" 
+            max="10"
+            value={herRating} 
+            onChange={(e) => setHerRating(Math.round(Number(e.target.value)))}
+            className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:border-transparent transition-all" 
+            style={{borderColor: '#9370DB'}}
+            step="1"
+          />
+          <div className="flex flex-wrap mt-2 mb-4">
+            {[...Array(10)].map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => setHerRating(i + 1)}
+                className="w-8 h-8 rounded-full mr-1 mb-1 flex items-center justify-center transition-all transform hover:scale-110"
+                style={{
+                  backgroundColor: i < herRating ? '#FFD700' : '#e5e7eb',
+                  color: i < herRating ? '#333' : '#4b5563'
+                }}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
           
           <label className="block text-gray-700 mt-2 mb-2">Her Review</label>
           <textarea 
@@ -232,7 +273,7 @@ const AddMovieForm = ({ onAddMovie, formType }) => {
               <div className="mt-3 h-40 flex justify-center bg-gray-100 p-2 rounded">
                 <img 
                   src={poster} 
-                  alt={title} 
+                  alt={title || "Movie poster preview"} 
                   className="h-full object-contain transition-all duration-300 transform hover:scale-105" 
                   onError={(e) => {
                     e.target.onerror = null; 
@@ -247,10 +288,11 @@ const AddMovieForm = ({ onAddMovie, formType }) => {
           
           <button 
             type="submit"
-            className="w-full text-white py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-md"
+            disabled={isSubmitting}
+            className="w-full text-white py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 font-medium shadow-md disabled:opacity-50"
             style={{background: `linear-gradient(to right, ${getFormColor()}, ${getFormColor()}dd)`}}
           >
-            Add Movie
+            {isSubmitting ? 'Adding Movie...' : 'Add Movie'}
           </button>
         </form>
       )}

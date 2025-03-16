@@ -68,3 +68,158 @@ code {
 .font-satisfy {
   font-family: 'Satisfy', cursive;
 }
+
+/* Responsive Container Fixes */
+.container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  box-sizing: border-box;
+}
+
+/* Main Content Area */
+main.container {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Page Container */
+.page-enter, 
+.max-w-4xl {
+  width: 100%;
+  max-width: 896px !important; /* 4xl is 56rem or 896px */
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Center Fix for Fixed Width Elements */
+.absolute-center {
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Responsive Breakpoints - Match Tailwind Default */
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}
+
+/* Fix for Firefox scroll issues */
+html, body {
+  overflow-x: hidden;
+}
+
+/* Ensure padding is included in width calculations */
+* {
+  box-sizing: border-box;
+}
+
+/* Add these mobile-friendly styles at the end of the file */
+
+/* Enhanced Mobile-Friendly Styles */
+@media (max-width: 640px) {
+  /* Better navigation for mobile */
+  header nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1rem !important;
+    padding: 0.5rem 0;
+  }
+
+  /* Properly scale main content area */
+  main.container {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+
+  /* Adjust card size on mobile */
+  .movie-card {
+    width: 100% !important;
+    margin-bottom: 1.5rem !important;
+  }
+  
+  /* Adjust movie grid for mobile */
+  .grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Ensure inputs and forms fit on mobile */
+  input, textarea, select, button {
+    max-width: 100%;
+  }
+
+  /* Make buttons more touchable on mobile */
+  button, 
+  a.button, 
+  [role="button"],
+  .nav-link {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.5rem 1rem;
+    touch-action: manipulation;
+  }
+
+  /* Ensure proper spacing for form elements */
+  .mb-4 {
+    margin-bottom: 1rem !important;
+  }
+
+  /* Rating buttons row */
+  div.flex.mt-2.mb-4 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  /* Better spacing for buttons on mobile */
+  button.w-8.h-8.rounded-full.mr-1 {
+    margin: 0.125rem;
+  }
+}
+
+/* Fix for mobile rating buttons */
+@media (max-width: 480px) {
+  button.w-8.h-8.rounded-full.mr-1 {
+    width: 2rem !important;
+    height: 2rem !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0.25rem !important;
+  }
+
+  /* Improved options menu positioning */
+  .absolute.right-0.mt-1.w-32 {
+    right: 0 !important;
+    width: auto !important;
+    min-width: 120px;
+  }
+}
+
+/* Better touch targets for all interactive elements */
+a, button, input[type="button"], input[type="submit"] {
+  touch-action: manipulation;
+}

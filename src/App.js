@@ -89,7 +89,7 @@ const AppContent = () => {
         </div>
       </header>
       
-      <main className="container mx-auto px-16 py-8 z-10 relative">
+      <main className="container mx-auto px-4 md:px-16 py-8 z-10 relative">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/his-movies" element={<HisMoviesPage />} />

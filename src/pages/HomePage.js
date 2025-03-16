@@ -4,10 +4,13 @@ import { useMovies } from '../context/MovieContext';
 import himImage from '../img/him.jpeg';
 import herImage from '../img/her.jpeg';
 import usImage from '../img/us.jpeg';
+import { testFirestoreConnection } from '../firebase';
 
 const HomePage = () => {
-  const { getHisMovies, getHerMovies, getOurMovies } = useMovies();
+  const { getHisMovies, getHerMovies, getOurMovies, addMovie } = useMovies();
   const [animate, setAnimate] = useState(false);
+  const [testStatus, setTestStatus] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     // Trigger animation after component mounts
@@ -19,6 +22,46 @@ const HomePage = () => {
   const ourMoviesCount = getOurMovies().length;
   
   const totalMovies = hisMoviesCount + herMoviesCount + ourMoviesCount;
+
+  // Function to test adding and retrieving a movie
+  const testDatabase = async () => {
+    setIsLoading(true);
+    setTestStatus('Testing database connection...');
+    
+    try {
+      // First verify connection 
+      const isConnected = await testFirestoreConnection();
+      
+      if (!isConnected) {
+        setTestStatus('❌ Database connection error. Check console for details.');
+        setIsLoading(false);
+        return;
+      }
+      
+      // Try to add a test movie
+      const testMovie = {
+        title: "Test Movie " + new Date().toISOString(),
+        poster: "https://via.placeholder.com/150x225?text=Test+Movie",
+        myRating: 8,
+        myReview: "This is a test review to verify database works.",
+        herRating: 9,
+        herReview: "This is another test review to verify database works."
+      };
+      
+      const addedMovie = await addMovie(testMovie);
+      
+      if (addedMovie && addedMovie.id) {
+        setTestStatus(`✅ Database test successful! Added test movie with ID: ${addedMovie.id}`);
+      } else {
+        setTestStatus('❓ Test movie was added but without an ID. Check console for details.');
+      }
+    } catch (error) {
+      console.error('Database test failed:', error);
+      setTestStatus(`❌ Database test failed: ${error.message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="max-w-4xl mx-auto page-enter">
@@ -107,6 +150,9 @@ const HomePage = () => {
           <p className="text-gray-600">Keep track of all your favorite films and your thoughts about them!</p>
         </div>
       </div>
+      
+      {/* Database verification section */}
+      
     </div>
   );
 };

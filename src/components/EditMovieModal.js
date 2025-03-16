@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const EditMovieModal = ({ movie, formType, onSave, onClose }) => {
   const [title, setTitle] = useState('');
@@ -8,6 +8,7 @@ const EditMovieModal = ({ movie, formType, onSave, onClose }) => {
   const [herRating, setHerRating] = useState(5);
   const [herReview, setHerReview] = useState('');
   const [isVisible, setIsVisible] = useState(false);
+  const modalRef = useRef(null);
 
   // Initialize form with movie data when component mounts
   useEffect(() => {
@@ -28,16 +29,34 @@ const EditMovieModal = ({ movie, formType, onSave, onClose }) => {
     return () => clearTimeout(timer);
   }, [movie]);
 
+  // Close modal when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [onClose]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Ensure integers for ratings
+    const updatedMyRating = Math.round(Number(myRating));
+    const updatedHerRating = Math.round(Number(herRating));
     
     const updatedMovie = {
       ...movie,
       title,
       poster,
-      myRating: formType === 'personal' || formType === 'both' ? myRating : movie.myRating,
+      myRating: formType === 'personal' || formType === 'both' ? updatedMyRating : movie.myRating,
       myReview: formType === 'personal' || formType === 'both' ? myReview : movie.myReview,
-      herRating: formType === 'partner' || formType === 'both' ? herRating : movie.herRating,
+      herRating: formType === 'partner' || formType === 'both' ? updatedHerRating : movie.herRating,
       herReview: formType === 'partner' || formType === 'both' ? herReview : movie.herReview,
     };
     
@@ -66,13 +85,13 @@ const EditMovieModal = ({ movie, formType, onSave, onClose }) => {
             style={{borderColor: getFormColor()}}
             step="1"
           />
-          <div className="flex mt-2 mb-4">
+          <div className="flex flex-wrap mt-2 mb-4">
             {[...Array(10)].map((_, i) => (
               <button
                 key={i}
                 type="button"
                 onClick={() => setMyRating(i + 1)}
-                className="w-8 h-8 rounded-full mr-1 flex items-center justify-center transition-all transform hover:scale-110"
+                className="w-8 h-8 rounded-full mr-1 mb-1 flex items-center justify-center transition-all transform hover:scale-110"
                 style={{
                   backgroundColor: i < myRating ? '#FFD700' : '#e5e7eb',
                   color: i < myRating ? '#333' : '#4b5563'
@@ -106,13 +125,13 @@ const EditMovieModal = ({ movie, formType, onSave, onClose }) => {
             style={{borderColor: getFormColor()}}
             step="1"
           />
-          <div className="flex mt-2 mb-4">
+          <div className="flex flex-wrap mt-2 mb-4">
             {[...Array(10)].map((_, i) => (
               <button
                 key={i}
                 type="button"
                 onClick={() => setHerRating(i + 1)}
-                className="w-8 h-8 rounded-full mr-1 flex items-center justify-center transition-all transform hover:scale-110"
+                className="w-8 h-8 rounded-full mr-1 mb-1 flex items-center justify-center transition-all transform hover:scale-110"
                 style={{
                   backgroundColor: i < herRating ? '#FFD700' : '#e5e7eb',
                   color: i < herRating ? '#333' : '#4b5563'
@@ -148,13 +167,13 @@ const EditMovieModal = ({ movie, formType, onSave, onClose }) => {
               style={{borderColor: getFormColor()}}
               step="1"
             />
-            <div className="flex mt-2 mb-4">
+            <div className="flex flex-wrap mt-2 mb-4">
               {[...Array(10)].map((_, i) => (
                 <button
                   key={i}
                   type="button"
                   onClick={() => setMyRating(i + 1)}
-                  className="w-8 h-8 rounded-full mr-1 flex items-center justify-center transition-all transform hover:scale-110"
+                  className="w-8 h-8 rounded-full mr-1 mb-1 flex items-center justify-center transition-all transform hover:scale-110"
                   style={{
                     backgroundColor: i < myRating ? '#FFD700' : '#e5e7eb',
                     color: i < myRating ? '#333' : '#4b5563'
@@ -172,7 +191,35 @@ const EditMovieModal = ({ movie, formType, onSave, onClose }) => {
               rows="3"
               style={{borderColor: getFormColor()}}
             />
-            <label className="block text-gray-700 mt-3 mb-2">Her Review</label>
+            
+            <label className="block text-gray-700 mt-5 mb-2">Her Rating (1-10)</label>
+            <input 
+              type="number" 
+              min="1" 
+              max="10"
+              value={herRating} 
+              onChange={(e) => setHerRating(Math.round(Number(e.target.value)))}
+              className="w-full p-2 border border-gray-300 rounded" 
+              style={{borderColor: getFormColor()}}
+              step="1"
+            />
+            <div className="flex flex-wrap mt-2 mb-4">
+              {[...Array(10)].map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setHerRating(i + 1)}
+                  className="w-8 h-8 rounded-full mr-1 mb-1 flex items-center justify-center transition-all transform hover:scale-110"
+                  style={{
+                    backgroundColor: i < herRating ? '#FFD700' : '#e5e7eb',
+                    color: i < herRating ? '#333' : '#4b5563'
+                  }}
+                >
+                  {i + 1}
+                </button>
+              ))}
+            </div>
+            <label className="block text-gray-700 mt-2 mb-2">Her Review</label>
             <textarea 
               value={herReview} 
               onChange={(e) => setHerReview(e.target.value)}
@@ -188,7 +235,7 @@ const EditMovieModal = ({ movie, formType, onSave, onClose }) => {
 
   // Modal backdrop with click outside to close
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 transition-all duration-300">
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 transition-all duration-300 overflow-y-auto">
       <div 
         className="absolute inset-0" 
         onClick={onClose}
@@ -196,13 +243,14 @@ const EditMovieModal = ({ movie, formType, onSave, onClose }) => {
       ></div>
       
       <div 
-        className={`bg-white rounded-lg shadow-xl p-6 w-full max-w-md relative z-10 max-h-[90vh] overflow-y-auto transition-all duration-500 transform ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
+        ref={modalRef}
+        className={`bg-white rounded-lg shadow-xl p-4 sm:p-6 w-full max-w-md relative z-10 max-h-[95vh] overflow-y-auto transition-all duration-500 transform ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
       >
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold" style={{color: getFormColor()}}>Edit Movie</h2>
           <button 
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors transform hover:rotate-90 duration-300"
+            className="text-gray-500 hover:text-gray-700 transition-colors transform hover:rotate-90 duration-300 p-2"
             aria-label="Close"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -237,7 +285,7 @@ const EditMovieModal = ({ movie, formType, onSave, onClose }) => {
               <div className="mt-2 h-32 flex justify-center">
                 <img 
                   src={poster} 
-                  alt={title} 
+                  alt={title || 'Movie poster preview'} 
                   className="h-full object-contain transition-all duration-300 transform hover:scale-110" 
                   onError={(e) => {
                     e.target.onerror = null;
@@ -254,13 +302,13 @@ const EditMovieModal = ({ movie, formType, onSave, onClose }) => {
             <button 
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-all transform hover:scale-105"
+              className="px-4 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-all transform hover:scale-105"
             >
               Cancel
             </button>
             <button 
               type="submit"
-              className="px-4 py-2 text-white rounded-lg transition-all transform hover:scale-105"
+              className="px-4 py-3 text-white rounded-lg transition-all transform hover:scale-105"
               style={{backgroundColor: getFormColor()}}
             >
               Save Changes

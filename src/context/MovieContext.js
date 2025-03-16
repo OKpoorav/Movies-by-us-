@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { db, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, where } from '../firebase';
+import { db, collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from '../firebase';
 
 // Empty initial data
 const initialMovies = [];
@@ -27,41 +27,10 @@ export const MovieProvider = ({ children }) => {
           ...doc.data()
         }));
         
-        // If Firebase has data, use it
-        if (moviesData.length > 0) {
-          setMovies(moviesData);
-        } else {
-          // Check if we have data in localStorage that we can migrate to Firebase
-          const savedMovies = localStorage.getItem('movies');
-          if (savedMovies) {
-            const parsedMovies = JSON.parse(savedMovies);
-            
-            // If we have local data but no Firebase data, migrate it
-            if (parsedMovies.length > 0) {
-              console.log('Migrating data from localStorage to Firebase...');
-              
-              // Create a batch of promises to add all movies to Firebase
-              const migrationPromises = parsedMovies.map(async (movie) => {
-                // Remove any existing id to let Firestore generate a new one
-                const { id, ...movieWithoutId } = movie;
-                try {
-                  const docRef = await addDoc(collection(db, COLLECTION_NAME), movieWithoutId);
-                  return { ...movie, id: docRef.id };
-                } catch (error) {
-                  console.error("Error migrating movie:", error);
-                  return movie;
-                }
-              });
-              
-              // Wait for all migrations to complete
-              const migratedMovies = await Promise.all(migrationPromises);
-              setMovies(migratedMovies);
-              console.log('Migration complete!');
-            } else {
-              setMovies(parsedMovies);
-            }
-          }
-        }
+        // Set movies data (will be empty if database is empty)
+        console.log(`Loaded ${moviesData.length} movies from Firebase`);
+        setMovies(moviesData);
+        
       } catch (error) {
         console.error("Error fetching movies: ", error);
         // Fallback to localStorage if Firebase fails
@@ -81,21 +50,28 @@ export const MovieProvider = ({ children }) => {
   useEffect(() => {
     if (movies.length > 0) {
       localStorage.setItem('movies', JSON.stringify(movies));
+    } else {
+      // Clear localStorage when no movies exist
+      localStorage.removeItem('movies');
     }
   }, [movies]);
 
   // Add a new movie
   const addMovie = async (newMovie) => {
     try {
+      // Remove any existing id to let Firestore generate a new one
+      const { id, ...movieWithoutId } = newMovie;
+      
       // Add the movie to Firestore
-      const docRef = await addDoc(collection(db, COLLECTION_NAME), newMovie);
+      const docRef = await addDoc(collection(db, COLLECTION_NAME), movieWithoutId);
       
       // Update the movie object with the Firestore document ID
-      const movieWithId = { ...newMovie, id: docRef.id };
+      const movieWithId = { ...movieWithoutId, id: docRef.id };
       
       // Update local state
       setMovies(prevMovies => [...prevMovies, movieWithId]);
       
+      console.log(`Added movie: ${movieWithId.title} with ID: ${movieWithId.id}`);
       return movieWithId;
     } catch (error) {
       console.error("Error adding movie: ", error);
@@ -111,11 +87,18 @@ export const MovieProvider = ({ children }) => {
   // Edit a movie
   const editMovie = async (updatedMovie) => {
     try {
+      if (!updatedMovie || !updatedMovie.id) {
+        throw new Error("Movie or movie ID is missing");
+      }
+      
       // Get the Firestore document reference
       const movieRef = doc(db, COLLECTION_NAME, updatedMovie.id);
       
+      // Make a copy without the ID for Firestore
+      const { id, ...movieDataWithoutId } = updatedMovie;
+      
       // Update the document in Firestore
-      await updateDoc(movieRef, updatedMovie);
+      await updateDoc(movieRef, movieDataWithoutId);
       
       // Update local state
       setMovies(prevMovies => 
@@ -124,6 +107,7 @@ export const MovieProvider = ({ children }) => {
         )
       );
       
+      console.log(`Updated movie: ${updatedMovie.title} with ID: ${updatedMovie.id}`);
       return updatedMovie;
     } catch (error) {
       console.error("Error updating movie: ", error);
@@ -142,6 +126,10 @@ export const MovieProvider = ({ children }) => {
   // Delete a movie
   const deleteMovie = async (movieId) => {
     try {
+      if (!movieId) {
+        throw new Error("Movie ID is missing");
+      }
+      
       // Get the Firestore document reference
       const movieRef = doc(db, COLLECTION_NAME, movieId);
       
@@ -151,6 +139,7 @@ export const MovieProvider = ({ children }) => {
       // Update local state
       setMovies(prevMovies => prevMovies.filter(movie => movie.id !== movieId));
       
+      console.log(`Deleted movie with ID: ${movieId}`);
       return true;
     } catch (error) {
       console.error("Error deleting movie: ", error);
